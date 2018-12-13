@@ -1,0 +1,227 @@
+objectIdentifier testOID                1.3.6.1.4.1.1.1.1
+
+objectIdentifier testAttr               testOID:1
+objectIdentifier testObject             testOID:2
+
+objectIdentifier userPrivIDOID          testAttr:1
+objectIdentifier userPrivIPMIOID        testAttr:2
+objectIdentifier userpasswdIPMIOID      testAttr:3
+objectIdentifier channelIDOID           testAttr:4
+objectIdentifier IPMIChPrivOID          testAttr:5
+objectIdentifier groupIDOID             testAttr:6
+
+objectIdentifier bmcIDOID               testAttr:7
+objectIdentifier bmcGroupNameOID        testAttr:8
+
+objectIdentifier ipmiChNumOID           testAttr:9
+
+
+
+objectIdentifier loginStatOID           testAttr:10
+objectIdentifier loginIntfOID           testAttr:11
+
+
+
+objectIdentifier bmcUidOID              testAttr:12
+
+
+
+objectIdentifier userEnabledOID         testAttr:13
+objectIdentifier userLFFAOID            testAttr:14
+objectIdentifier userPrilOID            testAttr:15
+
+
+objectIdentifier userPrivObjOID         testObject:1
+objectIdentifier userGroupObjOID        testObject:2
+objectIdentifier userIPMIObjOID         testObject:3
+objectIdentifier IPMIChInfoObjOID       testObject:4
+objectIdentifier groupObjOID            testObject:5
+objectIdentifier privRoleObjOID         testObject:6
+
+
+objectIdentifier BMCInfoObjOID          testObject:7
+
+objectIdentifier BMCGroupInfoObjOID     testObject:8
+
+objectIdentifier ipmiMappingInfoObjOID  testObject:9
+
+objectIdentifier userBMCInfoObjOID      testObject:10
+
+
+
+objectIdentifier userGrpInfObjOID       testObject:11
+
+
+
+objectIdentifier userAccountInfObjOID   testObject:12
+
+
+
+attributetype ( userPrivIDOID
+    NAME 'privRoleID'
+    DESC 'user privilege role ID'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+
+attributetype ( groupIDOID
+    NAME 'groupID'
+    DESC 'group ID'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( userGroupObjOID
+    NAME 'user-group-obj'
+    DESC 'user group info object class'
+    SUP top STRUCTURAL
+    MUST ( groupID )
+     )
+
+attributetype ( userpasswdIPMIOID
+    NAME 'user-passwd-ch'
+    DESC 'user password per ipmi channel'
+    SUP userPassword )
+
+attributetype ( userPrivIPMIOID
+    NAME 'user-priv-ipmi-ch'
+    DESC 'user privilege level per ipmi channel'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+
+attributetype ( channelIDOID
+    NAME 'chID'
+    DESC 'channel ID'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( bmcIDOID
+    NAME 'bmcID'
+    DESC 'bmc ID'
+    SUP macAddress )
+
+attributetype ( bmcGroupNameOID
+    NAME 'bmc-group-name'
+    DESC 'categorized by bmc group name'
+    SUP name )
+
+attributetype ( ipmiChNumOID
+    NAME 'ipmi-ch-num'
+    DESC 'channel number in ipmi'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+attributetype ( loginStatOID
+    NAME 'user-login-disabled'
+    DESC 'user login status'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+attributetype ( loginIntfOID
+    NAME 'user-login-interface'
+    DESC 'user login interface'
+    SUP cn )
+
+attributetype ( bmcUidOID
+    NAME 'bmc-uid'
+    DESC 'bmc id'
+    SUP uid )
+
+attributetype ( IPMIChPrivOID
+    NAME 'chan-priv-lvl'
+    DESC 'per ipmi channel privilege level'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( userEnabledOID
+    NAME 'UserEnabled'
+    DESC 'user enabled status'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+attributetype ( userLFFAOID
+    NAME 'UserLockedForFailAttempt'
+    DESC 'Locked or unlocked state of the user account'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+attributetype ( userPrilOID
+    NAME 'UserPrivilege'
+    DESC 'user privilege role ID'
+    SUP privRoleID )
+
+objectclass ( IPMIChInfoObjOID
+    NAME 'ipmi-info-obj'
+    DESC 'ipmi channel info object class'
+    SUP top STRUCTURAL
+    MUST (chID)
+    MAY ( cn $ chan-priv-lvl) )
+
+
+
+objectclass ( groupObjOID
+    NAME 'group-obj'
+    DESC 'group object class'
+    SUP posixGroup STRUCTURAL
+    MUST ( gidNumber $ cn)
+    MAY (bmc-uid)
+     )
+
+objectclass ( privRoleObjOID
+    NAME 'priv-role-obj'
+    DESC 'privilege roles object class'
+    SUP top STRUCTURAL
+    MUST ( privRoleID $ cn)
+     )
+
+objectclass ( BMCInfoObjOID
+    NAME 'bmc-info-obj'
+    DESC 'bmc info object class'
+    SUP top STRUCTURAL
+    MUST ( bmc-uid $ macAddress)
+    MAY (gidNumber $ cn)
+     )
+
+objectclass ( BMCGroupInfoObjOID
+    NAME 'bmc-group-info-obj'
+    DESC 'bmc group info object class'
+    SUP top STRUCTURAL
+    MUST ( bmc-group-name)
+     )
+
+objectclass ( ipmiMappingInfoObjOID
+    NAME 'ipmi-mapping-info-obj'
+    DESC 'channel mapping in ipmi info object class'
+    SUP top STRUCTURAL
+    MUST ( cn $ ipmi-ch-num )
+     )
+
+
+objectclass ( userBMCInfoObjOID
+    NAME 'user-bmc-info-obj'
+    DESC 'user per bmc info object class'
+    SUP top STRUCTURAL
+    MUST ( bmcID $ privRoleID )
+     )
+
+objectclass ( userGrpInfObjOID
+    NAME 'user-group-info-obj'
+    DESC 'user per group access info object class'
+    SUP top STRUCTURAL
+    MUST ( cn $ user-login-disabled  $ privRoleID $ user-login-interface )
+    MAY (gidNumber)
+     )
+
+objectclass ( userAccountInfObjOID
+    NAME 'user-account-info-obj'
+    DESC 'extended user acount info object class'
+    SUP account STRUCTURAL
+    MUST ( UserPrivilege $ UserEnabled $ UserLockedForFailAttempt )
+     )
+
+objectclass ( userIPMIObjOID
+    NAME 'user-priv-ipmi-obj'
+    DESC 'user privilege per ipmi channel object class'
+    SUP top STRUCTURAL
+    MUST ( bmc-uid $ user-priv-ipmi-ch $ cn)
+    MAY (user-passwd-ch) )

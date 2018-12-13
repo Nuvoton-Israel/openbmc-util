@@ -1,0 +1,180 @@
+version: 1
+
+dn: ou=people,dc=ldap,dc=example,dc=com
+objectClass: organizationalUnit
+ou: people
+
+dn: uid=user1,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-account-info-obj
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: user1
+gidNumber: 1010
+homeDirectory: /home/user1
+uid: user1
+uidNumber: 1001
+UserEnabled: 0
+UserLockedForFailAttempt: 0
+UserPrivilege: priv-admin
+loginShell: /bin/sh
+userPassword: {SSHA}/Uceqw3pLFKP1db9+Uw3DFBrxxR3qwKS
+
+dn: uid=user2,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-account-info-obj
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: user2
+gidNumber: 1010
+homeDirectory: /home/user2
+uid: user2
+uidNumber: 1002
+UserEnabled: 0
+UserLockedForFailAttempt: 0
+UserPrivilege: priv-admin
+loginShell: /bin/sh
+userPassword: {SSHA}dB2QIjAhUtyhyr/YzQIQjtDD3uBxtY1F
+
+dn: uid=user3,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-account-info-obj
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: user3
+gidNumber: 1010
+homeDirectory: /home/user3
+uid: user3
+uidNumber: 1003
+UserEnabled: 0
+UserLockedForFailAttempt: 0
+UserPrivilege: priv-admin
+loginShell: /bin/sh
+userPassword: {SSHA}dB2QIjAhUtyhyr/YzQIQjtDD3uBxtY1F
+
+dn: uid=proxyuser,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-account-info-obj
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: proxyuser
+gidNumber: 1010
+homeDirectory: ""
+uid: proxyuser
+uidNumber: 1000
+UserEnabled: 0
+UserLockedForFailAttempt: 0
+UserPrivilege: priv-admin
+loginShell: /bin/sh
+userPassword: {SSHA}dz7LWFmEJFU41E3YeHgIoGXCE/yKbihn
+
+dn: ou=login_info,uid=user1,ou=people,dc=ldap,dc=example,dc=com
+objectClass: organizationalUnit
+ou: login_info
+
+dn: cn=ftp,ou=login_info,uid=user1,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-group-info-obj
+cn: ftp
+privRoleID: priv-admin
+user-login-disabled: 0
+user-login-interface: ssh
+user-login-interface: redfish
+user-login-interface: /dev/pts
+user-login-interface: /dev/tty
+
+dn: cn=email,ou=login_info,uid=user1,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-group-info-obj
+cn: email
+privRoleID: priv-admin
+user-login-disabled: 0
+user-login-interface: ssh
+user-login-interface: /dev/pts
+user-login-interface: /dev/tty
+user-login-interface: web
+
+dn: cn=webserver,ou=login_info,uid=user1,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-group-info-obj
+cn: webserver
+privRoleID: priv-admin
+user-login-disabled: 0
+user-login-interface: ssh
+user-login-interface: ipmi
+user-login-interface: /dev/pts
+user-login-interface: /dev/tty
+
+dn: bmc-uid=bmc1,cn=webserver,ou=login_info,uid=user1,ou=people,dc=ldap,dc=e
+ xample,dc=com
+objectClass: user-priv-ipmi-obj
+bmc-uid: bmc1
+cn: priIPMB
+user-priv-ipmi-ch: admin
+
+dn: ou=login_info,uid=user2,ou=people,dc=ldap,dc=example,dc=com
+objectClass: organizationalUnit
+ou: login_info
+
+dn: cn=email,ou=login_info,uid=user2,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-group-info-obj
+cn: email
+privRoleID: priv-admin
+user-login-disabled: 0
+user-login-interface: ssh
+user-login-interface: ipmi
+user-login-interface: /dev/pts
+user-login-interface: /dev/tty
+
+dn: cn=webserver,ou=login_info,uid=user2,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-group-info-obj
+cn: webserver
+privRoleID: priv-admin
+user-login-disabled: 0
+user-login-interface: ssh
+user-login-interface: ipmi
+user-login-interface: /dev/pts
+user-login-interface: /dev/tty
+
+dn: bmc-uid=bmc1,cn=email,ou=login_info,uid=user2,ou=people,dc=ldap,dc=examp
+ le,dc=com
+objectClass: user-priv-ipmi-obj
+bmc-uid: bmc1
+cn: priIPMB
+user-priv-ipmi-ch: operator
+
+dn: bmc-uid=bmc1,cn=webserver,ou=login_info,uid=user2,ou=people,dc=ldap,dc=e
+ xample,dc=com
+objectClass: user-priv-ipmi-obj
+bmc-uid: bmc1
+cn: priIPMB
+user-priv-ipmi-ch: admin
+
+dn: ou=login_info,uid=user3,ou=people,dc=ldap,dc=example,dc=com
+objectClass: organizationalUnit
+ou: login_info
+
+dn: cn=email,ou=login_info,uid=user3,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-group-info-obj
+cn: email
+privRoleID: priv-admin
+user-login-disabled: 1
+user-login-interface: ssh
+user-login-interface: ipmi
+
+dn: cn=webserver,ou=login_info,uid=user3,ou=people,dc=ldap,dc=example,dc=com
+objectClass: user-group-info-obj
+cn: webserver
+privRoleID: priv-admin
+user-login-disabled: 0
+user-login-interface: ipmi
+user-login-interface: redfish
+user-login-interface: ssh
+
+dn: bmc-uid=bmc1,cn=email,ou=login_info,uid=user3,ou=people,dc=ldap,dc=examp
+ le,dc=com
+objectClass: user-priv-ipmi-obj
+bmc-uid: bmc1
+cn: priIPMB
+user-priv-ipmi-ch: operator
+
+dn: bmc-uid=bmc1,cn=webserver,ou=login_info,uid=user3,ou=people,dc=ldap,dc=e
+ xample,dc=com
+objectClass: user-priv-ipmi-obj
+bmc-uid: bmc1
+cn: priIPMB
+user-priv-ipmi-ch: admin
+

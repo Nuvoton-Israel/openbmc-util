@@ -1,0 +1,25 @@
+version: 1
+
+dn: ou=ap_group,dc=ldap,dc=example,dc=com
+objectClass: organizationalUnit
+ou: ap_group
+
+dn: cn=ftp,ou=ap_group,dc=ldap,dc=example,dc=com
+objectClass: group-obj
+cn: ftp
+gidNumber: 1016
+bmc-uid: bmc1
+bmc-uid: bmc2
+
+dn: cn=email,ou=ap_group,dc=ldap,dc=example,dc=com
+objectClass: group-obj
+cn: email
+gidNumber: 1015
+bmc-uid: bmc1
+
+dn: cn=webserver,ou=ap_group,dc=ldap,dc=example,dc=com
+objectClass: group-obj
+cn: webserver
+gidNumber: 1014
+bmc-uid: bmc2
+
