@@ -1,0 +1,26 @@
+version: 1
+
+dn: ou=privRole,dc=ldap,dc=example,dc=com
+objectClass: organizationalUnit
+ou: privRole
+
+dn: privRoleID=priv-user,ou=privRole,dc=ldap,dc=example,dc=com
+objectClass: priv-role-obj
+cn: user
+privRoleID: priv-user
+
+dn: privRoleID=priv-admin,ou=privRole,dc=ldap,dc=example,dc=com
+objectClass: priv-role-obj
+cn: admin
+privRoleID: priv-admin
+
+dn: privRoleID=priv-callback,ou=privRole,dc=ldap,dc=example,dc=com
+objectClass: priv-role-obj
+cn: callback
+privRoleID: priv-callback
+
+dn: privRoleID=priv-operator,ou=privRole,dc=ldap,dc=example,dc=com
+objectClass: priv-role-obj
+cn: operator
+privRoleID: priv-operator
+

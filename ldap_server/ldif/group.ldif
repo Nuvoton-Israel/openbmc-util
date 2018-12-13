@@ -1,0 +1,26 @@
+version: 1
+
+dn: ou=group,dc=ldap,dc=example,dc=com
+objectClass: organizationalUnit
+ou: group
+
+dn: cn=ssh,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: ssh
+gidNumber: 1010
+
+dn: cn=web,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: web
+gidNumber: 1013
+
+dn: cn=ipmi,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: ipmi
+gidNumber: 1011
+
+dn: cn=redfish,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: redfish
+gidNumber: 1012
+
