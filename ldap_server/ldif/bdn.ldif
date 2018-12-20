@@ -1,0 +1,5 @@
+dn: dc=ldap,dc=example,dc=com
+objectClass: dcObject
+objectClass: organization
+dc: ldap
+o: NUVOTON Test
