@@ -17,7 +17,7 @@ UserEnabled: 0
 UserLockedForFailAttempt: 0
 UserPrivilege: priv-admin
 loginShell: /bin/sh
-userPassword: {SSHA}/Uceqw3pLFKP1db9+Uw3DFBrxxR3qwKS
+userPassword: {SSHA}M32upRyL0qlcX9iEfnR9Zrt0Sgn2Ucp5
 
 dn: uid=user2,ou=people,dc=ldap,dc=example,dc=com
 objectClass: user-account-info-obj
@@ -32,7 +32,7 @@ UserEnabled: 0
 UserLockedForFailAttempt: 0
 UserPrivilege: priv-admin
 loginShell: /bin/sh
-userPassword: {SSHA}dB2QIjAhUtyhyr/YzQIQjtDD3uBxtY1F
+userPassword: {SSHA}5AE3qOct8MlvuE5b5nhNrntU8K7g2+wG
 
 dn: uid=user3,ou=people,dc=ldap,dc=example,dc=com
 objectClass: user-account-info-obj
@@ -98,11 +98,11 @@ user-login-interface: ipmi
 user-login-interface: /dev/pts
 user-login-interface: /dev/tty
 
-dn: bmc-uid=bmc1,cn=webserver,ou=login_info,uid=user1,ou=people,dc=ldap,dc=e
+dn: bmc-uid=bmc2,cn=webserver,ou=login_info,uid=user1,ou=people,dc=ldap,dc=e
  xample,dc=com
 objectClass: user-priv-ipmi-obj
-bmc-uid: bmc1
-cn: priIPMB
+bmc-uid: bmc2
+cn: priNetwork
 user-priv-ipmi-ch: admin
 
 dn: ou=login_info,uid=user2,ou=people,dc=ldap,dc=example,dc=com
@@ -128,6 +128,7 @@ user-login-interface: ssh
 user-login-interface: ipmi
 user-login-interface: /dev/pts
 user-login-interface: /dev/tty
+user-login-interface: web
 
 dn: bmc-uid=bmc1,cn=email,ou=login_info,uid=user2,ou=people,dc=ldap,dc=examp
  le,dc=com
@@ -136,11 +137,11 @@ bmc-uid: bmc1
 cn: priIPMB
 user-priv-ipmi-ch: operator
 
-dn: bmc-uid=bmc1,cn=webserver,ou=login_info,uid=user2,ou=people,dc=ldap,dc=e
+dn: bmc-uid=bmc2,cn=webserver,ou=login_info,uid=user2,ou=people,dc=ldap,dc=e
  xample,dc=com
 objectClass: user-priv-ipmi-obj
-bmc-uid: bmc1
-cn: priIPMB
+bmc-uid: bmc2
+cn: priNetwork
 user-priv-ipmi-ch: admin
 
 dn: ou=login_info,uid=user3,ou=people,dc=ldap,dc=example,dc=com
