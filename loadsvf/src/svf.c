@@ -32,6 +32,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <inttypes.h>
+#include <ctype.h>
 #include "jtag.h"
 
 #define ERROR_OK                        (0)

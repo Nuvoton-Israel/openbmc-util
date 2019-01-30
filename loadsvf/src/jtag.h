@@ -103,6 +103,16 @@ struct scan_field {
 
 const char *tap_state_name(tap_state_t state);
 tap_state_t tap_state_by_name(const char *name);
+STATUS JTAG_set_pspi(int handle, unsigned int enable);
+STATUS JTAG_set_cntlr_mode(int handle, const JTAGDriverState setMode);
+STATUS JTAG_set_directgpio(int handle, unsigned int enable);
 STATUS JTAG_set_tap_state(JTAG_Handler* state, JtagStates tap_state);
+STATUS JTAG_set_clock_frequency(int handle, unsigned int frequency);
+STATUS JTAG_wait_cycles(JTAG_Handler* state, unsigned int number_of_cycles);
+int JTAG_ir_scan(JTAG_Handler* handler, int num_bits, const uint8_t *out_bits, uint8_t *in_bits,
+	tap_state_t state);
+int JTAG_dr_scan(JTAG_Handler* handler, int num_bits, const uint8_t *out_bits, uint8_t *in_bits,
+	tap_state_t state);
+
 
 #endif

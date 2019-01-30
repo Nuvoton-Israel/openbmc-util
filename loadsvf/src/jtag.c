@@ -146,7 +146,7 @@ STATUS JTAG_shift(JTAG_Handler* state, struct scan_xfer *scan_xfer)
 	return ST_OK;
 }
 
-int JTAG_dr_scan(JTAG_Handler* handler, int num_bits, uint8_t *out_bits, uint8_t *in_bits,
+int JTAG_dr_scan(JTAG_Handler* handler, int num_bits, const uint8_t *out_bits, uint8_t *in_bits,
 	tap_state_t state)
 {
 	struct scan_xfer scan_xfer = {0};
@@ -179,7 +179,7 @@ int JTAG_dr_scan(JTAG_Handler* handler, int num_bits, uint8_t *out_bits, uint8_t
 	return 0;
 }
 
-int JTAG_ir_scan(JTAG_Handler* handler, int num_bits, uint8_t *out_bits, uint8_t *in_bits,
+int JTAG_ir_scan(JTAG_Handler* handler, int num_bits, const uint8_t *out_bits, uint8_t *in_bits,
 	tap_state_t state)
 {
 	struct scan_xfer scan_xfer = {0};
