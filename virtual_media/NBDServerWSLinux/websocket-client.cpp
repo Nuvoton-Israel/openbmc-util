@@ -190,6 +190,7 @@ void MainWindow::onBinaryMessageReceived(QByteArray message)
     /// transfer state is 6~7
     ////////////////////////////////////////////////////////////////
     uint32_t cflags = 0;
+    uint32_t unknow_opt_len;
     uint64_t magic_r = 0;
     uint32_t opt = 0;
     unsigned char exportsize[8];
@@ -239,10 +240,19 @@ void MainWindow::onBinaryMessageReceived(QByteArray message)
                 UnmountB->setEnabled(false);
                 nego_state=0;
             }else{
-                QMessageBox::information(this, tr("TODO"), tr("Please implement consume_len() & send_reply()"));
-                qInfo("The given option is unknown to this server implementation");
-                //consume_len(clp);
-                //send_reply(clp, opt, NBD_REP_ERR_UNSUP, -1, "The given option is unknown to this server implementation");
+                unknow_opt_len=0;
+                memcpy(&unknow_opt_len,ch+read_len,4);
+                read_len+=4;
+                unknow_opt_len = ntohl(unknow_opt_len);
+                if((got_len-read_len)>=unknow_opt_len){
+                    qInfo("The given option is unknown to this server implementation");
+                    read_len+=unknow_opt_len;
+                    send_reply(opt, NBD_REP_ERR_UNSUP, -1, "The given option is unknown to this server implementation");
+                    nego_state=2;
+                }else{
+                   qInfo("unknow_opt_len:%d(read_len:%d)(%d)",unknow_opt_len,read_len,got_len);
+                   QMessageBox::information(this, tr("TODO"), tr("Need to read more for unkown opt"));
+                }
             }
             break;
         case 4://required 4 bytes
@@ -356,6 +366,11 @@ void MainWindow::onBinaryMessageReceived(QByteArray message)
             //qInfo("State 7: handle write data(Invalid:%d)(Total:%d)(write_len:%ld)(pass_write:%d)",read_len,got_len,write_len,pass_write);
             handle_write(ch+read_len, pass_write);
             read_len+=pass_write;
+            break;
+        case 8:
+            memcpy(&unknow_opt_len,ch+read_len,4);
+            read_len+=4;
+            qInfo("case 8: unknow_opt_len:%d(%d)",unknow_opt_len,got_len);
             break;
         default:
             qInfo("Err:Unknown State");

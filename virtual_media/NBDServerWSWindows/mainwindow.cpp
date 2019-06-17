@@ -87,8 +87,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         QFileInfo fileInfo(fileLocation);
         leFile->setText(fileInfo.absoluteFilePath());
     }
-    lineEdit_Scan_End->setText("192.168.1.127");
-    lineEdit_IP->setText("192.168.1.127");
+    lineEdit_Scan_End->setText("192.168.0.2");
+    lineEdit_IP->setText("192.168.0.2");
     lineEdit_RMS_Port->setText("443");
     // Add supported Port
     comboBox_Port->addItem("443",443);

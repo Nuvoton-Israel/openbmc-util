@@ -171,6 +171,7 @@ void MainWindow::onBinaryMessageReceived(QByteArray message)
     /// transfer state is 6~7
     ////////////////////////////////////////////////////////////////
     uint32_t cflags = 0;
+    uint32_t unknow_opt_len,namelen;
     uint64_t magic_r = 0;
     uint32_t opt = 0;
     UCHAR exportsize[8];
@@ -203,10 +204,11 @@ void MainWindow::onBinaryMessageReceived(QByteArray message)
 
             break;
         case 3://required 4 bytes
-            qInfo("State 3:Read opt 4 bytes\n");
+            qInfo("State 3:Read opt 4 bytes");
             memcpy(&opt,ch+read_len,4);
             read_len+=4;
             opt = ntohl(opt);
+            qInfo("State 3:opt:%x",opt);
             if(opt==NBD_OPT_EXPORT_NAME){
                 qInfo("opt is NBD_OPT_EXPORT_NAME");
                 nego_state=4;
@@ -218,10 +220,19 @@ void MainWindow::onBinaryMessageReceived(QByteArray message)
                 bStart->setEnabled(true);//Connect to RMS
                 nego_state=0;
             }else{
-                QMessageBox::information(this, tr("TODO"), tr("Please implement consume_len() & send_reply()"));
-                qInfo("The given option is unknown to this server implementation");
-                //consume_len(clp);
-                //send_reply(clp, opt, NBD_REP_ERR_UNSUP, -1, "The given option is unknown to this server implementation");
+                unknow_opt_len=0;
+                memcpy(&unknow_opt_len,ch+read_len,4);
+                read_len+=4;
+                unknow_opt_len = ntohl(unknow_opt_len);
+                if((got_len-read_len)>=unknow_opt_len){
+                    qInfo("The given option is unknown to this server implementation");
+                    read_len+=unknow_opt_len;
+                    send_reply(opt, NBD_REP_ERR_UNSUP, -1, "The given option is unknown to this server implementation");
+                    nego_state=2;
+                }else{
+                   qInfo("unknow_opt_len:%d(read_len:%d)(%d)",unknow_opt_len,read_len,got_len);
+                   QMessageBox::information(this, tr("TODO"), tr("Need to read more for unkown opt"));
+                }
             }
             break;
         case 4://required 4 bytes
@@ -304,7 +315,6 @@ void MainWindow::onBinaryMessageReceived(QByteArray message)
                 if (WRITE_BINARY((char *)&flags, sizeof(flags)) < 0) {
                     qInfo("Failed to send flags.");
                 }else{
-
                     if (!(glob_flags & F_NO_ZEROES)) {
 
                         memset(zeros, '\0', sizeof(zeros));
