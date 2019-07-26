@@ -1,4 +1,3 @@
-version: 1
 
 dn: ou=ap_group,dc=ldap,dc=example,dc=com
 objectClass: organizationalUnit
