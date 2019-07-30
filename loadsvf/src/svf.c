@@ -1527,6 +1527,10 @@ XXR_common:
 			return ERROR_FAIL;
 			break;
 	}
+	if (svf_check_tdo_para_index >= SVF_CHECK_TDO_PARA_SIZE / 2) {
+		if (ERROR_OK != svf_check_tdo())
+			return ERROR_FAIL;
+	}
 #if 0
 	/* for fast executing, execute tap if necessary */
 	/* half of the buffer is for the next command */
