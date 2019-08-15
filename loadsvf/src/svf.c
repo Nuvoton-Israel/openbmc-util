@@ -67,9 +67,11 @@ enum svf_command {
 	TDR,
 	TIR,
 	TRST,
+	LOOP,
+	ENDLOOP
 };
 
-static const char *svf_command_name[14] = {
+static const char *svf_command_name[] = {
 	"ENDDR",
 	"ENDIR",
 	"FREQUENCY",
@@ -83,7 +85,9 @@ static const char *svf_command_name[14] = {
 	"STATE",
 	"TDR",
 	"TIR",
-	"TRST"
+	"TRST",
+	"LOOP",
+	"ENDLOOP"
 };
 
 enum trst_mode {
@@ -229,7 +233,7 @@ static struct svf_check_tdo_para *svf_check_tdo_para;
 static int svf_check_tdo_para_index;
 
 static int svf_read_command_from_file(FILE *fd);
-static int svf_check_tdo(void);
+static int svf_check_tdo(bool silent);
 static int svf_add_check_para(uint8_t enabled, int buffer_offset, int bit_len);
 static int svf_run_command(char *cmd_str);
 //static int svf_execute_tap(void);
@@ -241,6 +245,8 @@ static char *svf_command_buffer;
 static size_t svf_command_buffer_size;
 static int svf_line_number;
 static int svf_getline(char **lineptr, size_t *n, FILE *stream);
+long file_offset;
+int loop;
 
 #define SVF_MAX_BUFFER_SIZE_TO_COMMIT   (1024 * 1024)
 static uint8_t *svf_tdi_buffer, *svf_tdo_buffer, *svf_mask_buffer;
@@ -540,7 +546,7 @@ int handle_svf_command(JTAG_Handler* state, char *filename)
 		command_num++;
 	}
 
-	svf_check_tdo();
+	svf_check_tdo(false);
 free_all:
 
 	fclose(svf_fd);
@@ -853,7 +859,7 @@ static int svf_copy_hexstring_to_binary(char *str, uint8_t **bin, int orig_bit_l
 	return ERROR_OK;
 }
 
-static int svf_check_tdo(void)
+static int svf_check_tdo(bool silent)
 {
 	int i, len, index_var;
 
@@ -863,12 +869,14 @@ static int svf_check_tdo(void)
 		if ((svf_check_tdo_para[i].enabled)
 				&& buf_cmp_mask(&svf_tdi_buffer[index_var], &svf_tdo_buffer[index_var],
 				&svf_mask_buffer[index_var], len)) {
-			LOG_ERROR("tdo check error at line %d",
-				svf_check_tdo_para[i].line_num);
-			SVF_BUF_LOG(ERROR, &svf_tdi_buffer[index_var], len, "READ");
-			SVF_BUF_LOG(ERROR, &svf_tdo_buffer[index_var], len, "WANT");
-			SVF_BUF_LOG(ERROR, &svf_mask_buffer[index_var], len, "MASK");
-
+			if (!silent) {
+				LOG_ERROR("tdo check error at line %d",
+						svf_check_tdo_para[i].line_num);
+				SVF_BUF_LOG(ERROR, &svf_tdi_buffer[index_var], len, "READ");
+				SVF_BUF_LOG(ERROR, &svf_tdo_buffer[index_var], len, "WANT");
+				SVF_BUF_LOG(ERROR, &svf_mask_buffer[index_var], len, "MASK");
+			} else
+				svf_check_tdo_para_index = 0;
 			if (svf_ignore_error == 0)
 				return ERROR_FAIL;
 			else
@@ -938,6 +946,29 @@ static int svf_run_command(char *cmd_str)
 	command = svf_find_string_in_array(argus[0],
 			(char **)svf_command_name, ARRAY_SIZE(svf_command_name));
 	switch (command) {
+		case LOOP:
+			if (ERROR_OK != svf_check_tdo(false))
+				return ERROR_FAIL;
+			if (num_of_argu != 2) {
+				LOG_ERROR("invalid parameter of %s", argus[0]);
+				return ERROR_FAIL;
+			}
+
+			loop = atoi(argus[1]);
+			file_offset = ftell(svf_fd);
+			loop--;
+			break;
+		case ENDLOOP:
+			if (loop > 0) {
+				if (ERROR_OK == svf_check_tdo(true)) {
+					loop = 0;
+					break;
+				} else {
+					fseek(svf_fd, file_offset, SEEK_SET);
+					loop--;
+				}
+			}
+			break;
 		case ENDDR:
 		case ENDIR:
 			if (num_of_argu != 2) {
@@ -1528,7 +1559,7 @@ XXR_common:
 			break;
 	}
 	if (svf_check_tdo_para_index >= SVF_CHECK_TDO_PARA_SIZE / 2) {
-		if (ERROR_OK != svf_check_tdo())
+		if (ERROR_OK != svf_check_tdo(false))
 			return ERROR_FAIL;
 	}
 #if 0
