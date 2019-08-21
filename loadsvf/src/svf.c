@@ -1100,7 +1100,7 @@ XXR_common:
 					/* TDO */
 					pbuffer_tmp = &xxr_para_tmp->tdo;
 					xxr_para_tmp->data_mask |= XXR_TDO;
-				} else if (!strcmp(argus[i], "MASK")) {
+				} else if (!strcmp(argus[i], "MASK") || !strcmp(argus[i], "CMASK")) {
 					/* MASK */
 					pbuffer_tmp = &xxr_para_tmp->mask;
 					xxr_para_tmp->data_mask |= XXR_MASK;
