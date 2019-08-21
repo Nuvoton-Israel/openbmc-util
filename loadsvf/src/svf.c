@@ -368,6 +368,14 @@ static void svf_hexbuf_print(int dbg_lvl, const char *file, unsigned line,
 							 const char *function, const uint8_t *buf,
 							 int bit_len, const char *desc)
 {
+	int i, j;
+	int byte_len = (bit_len +7) / 8;
+	printf("%s: \n", desc);
+	for (i = byte_len; i--; i > 0) {
+		printf("%02x ", buf[i]);
+	}
+	printf("\n");
+#if 0
 #define LINE_LEN 80
 	int j, len = 0;
 	int byte_len = (bit_len + 7) / 8;
@@ -398,6 +406,7 @@ static void svf_hexbuf_print(int dbg_lvl, const char *file, unsigned line,
 	}
 
 	free(prbuf);
+#endif
 }
 
 static int svf_realloc_buffers(size_t len)
