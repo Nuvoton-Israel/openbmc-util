@@ -6,6 +6,7 @@
 #include "jtag.h"
 
 extern void DBG_log(int level, const char *format, ...);
+static int new_ioctl = 1;
 
 static const struct name_mapping {
     enum tap_state symbol;
@@ -58,8 +59,17 @@ tap_state_t tap_state_by_name(const char *name)
 
 STATUS JTAG_set_clock_frequency(int handle, unsigned int frequency)
 {
+	unsigned long req = new_ioctl ? JTAG_SIOCFREQ : JTAG_SIOCFREQ_OLD;
+
 	printf("Set PSPI freq: %u\n", frequency);
-	if (ioctl(handle, JTAG_SIOCFREQ, frequency) < 0) {
+	if (new_ioctl) {
+		if (ioctl(handle, req, &frequency) < 0) {
+			DBG_log(LEV_ERROR, "ioctl JTAG_SIOCFREQ failed");
+			return ST_ERR;
+		}
+		return ST_OK;
+	}
+	if (ioctl(handle, req, frequency) < 0) {
 		DBG_log(LEV_ERROR, "ioctl JTAG_SIOCFREQ failed");
 		return ST_ERR;
 	}
@@ -75,10 +85,19 @@ STATUS JTAG_set_pspi(int handle, unsigned int enable)
 	return ST_OK;
 }
 
+STATUS JTAG_set_pspi_irq(int handle, unsigned int enable)
+{
+	if (ioctl(handle, JTAG_PSPI_IRQ, enable) < 0) {
+		DBG_log(LEV_ERROR, "ioctl JTAG_PSPI failed");
+		return ST_ERR;
+	}
+	return ST_OK;
+}
+
 STATUS JTAG_set_directgpio(int handle, unsigned int enable)
 {
 	if (ioctl(handle, JTAG_DIRECTGPIO, enable) < 0) {
-		DBG_log(LEV_ERROR, "ioctl JTAG_DIRECTPGIO failed");
+		perror("set directgpio");
 		return ST_ERR;
 	}
 	return ST_OK;
@@ -103,8 +122,8 @@ STATUS JTAG_wait_cycles(JTAG_Handler* state, unsigned int number_of_cycles)
 {
 	if (state == NULL)
 		return ST_ERR;
+
     if (ioctl(state->JTAG_driver_handle, JTAG_RUNTEST, number_of_cycles) < 0) {
-        DBG_log(LEV_ERROR, "ioctl JTAG_RUNTEST failed");
         perror("runtest");
         return ST_ERR;
     }
@@ -117,12 +136,27 @@ STATUS JTAG_wait_cycles(JTAG_Handler* state, unsigned int number_of_cycles)
 //
 STATUS JTAG_set_tap_state(JTAG_Handler* state, JtagStates tap_state)
 {
+	unsigned long req = new_ioctl ? JTAG_SIOCSTATE : JTAG_SET_TAPSTATE;
+
 	if (state == NULL)
 		return ST_ERR;
 
-	if (ioctl(state->JTAG_driver_handle, JTAG_SET_TAPSTATE, tap_state) < 0) {
-		DBG_log(LEV_ERROR, "ioctl JTAG_SET_TAPSTATE failed");
-		return ST_ERR;
+	if (new_ioctl) {
+		struct jtag_tap_state tapstate;
+		tapstate.reset = 0;
+		tapstate.from = JTAG_STATE_CURRENT;
+		tapstate.endstate = tap_state;
+
+		if (ioctl(state->JTAG_driver_handle, req, &tapstate) < 0) {
+			DBG_log(LEV_ERROR, "ioctl JTAG_SIOCSTATE failed");
+			perror("set tap state");
+			return ST_ERR;
+		}
+	} else {
+		if (ioctl(state->JTAG_driver_handle, req, tap_state) < 0) {
+			DBG_log(LEV_ERROR, "ioctl JTAG_SET_TAPSTATE failed");
+			return ST_ERR;
+		}
 	}
 
 	// move the [soft] state to the requested tap state.
@@ -136,8 +170,29 @@ STATUS JTAG_set_tap_state(JTAG_Handler* state, JtagStates tap_state)
 	return ST_OK;
 }
 
-STATUS JTAG_shift(JTAG_Handler* state, struct scan_xfer *scan_xfer)
+STATUS JTAG_shift(JTAG_Handler* state, struct scan_xfer *scan_xfer, unsigned int type)
 {
+	if (new_ioctl) {
+		struct jtag_xfer xfer;
+		unsigned char tdio[TDI_DATA_SIZE];
+		unsigned int ptr;
+		xfer.from = JTAG_STATE_CURRENT;
+		xfer.endstate = scan_xfer->end_tap_state;
+		xfer.length = scan_xfer->length;
+		xfer.type = type;
+		xfer.direction = JTAG_READ_WRITE_XFER;
+		ptr = (unsigned int)tdio;
+		xfer.tdio = (__u64)ptr;
+		memcpy(tdio, scan_xfer->tdi, scan_xfer->tdi_bytes);
+		if (ioctl(state->JTAG_driver_handle, JTAG_IOCXFER, &xfer) < 0) {
+			perror("jtag shift");
+			return ST_ERR;
+		}
+		memcpy(scan_xfer->tdo, tdio, scan_xfer->tdo_bytes);
+
+		return ST_OK;
+	}
+
 	if (ioctl(state->JTAG_driver_handle, JTAG_READWRITESCAN, scan_xfer) < 0) {
 		DBG_log(LEV_ERROR, "ioctl JTAG_READWRITESCAN failed!");
 		return ST_ERR;
@@ -168,7 +223,7 @@ int JTAG_dr_scan(JTAG_Handler* handler, int num_bits, const uint8_t *out_bits, u
 			scan_xfer.end_tap_state = JtagShfDR;
 		else
 			scan_xfer.end_tap_state = state;
-		if (JTAG_shift(handler, &scan_xfer) != ST_OK) {
+		if (JTAG_shift(handler, &scan_xfer, JTAG_SDR_XFER) != ST_OK) {
 			DBG_log(LEV_ERROR, "ShftDR error");
 			return -1;
 		}
@@ -195,7 +250,7 @@ int JTAG_ir_scan(JTAG_Handler* handler, int num_bits, const uint8_t *out_bits, u
 	memcpy(scan_xfer.tdi, out_bits, scan_xfer.tdi_bytes);
 	scan_xfer.tdo_bytes = scan_xfer.tdi_bytes;
 	scan_xfer.end_tap_state = state;
-	if (JTAG_shift(handler, &scan_xfer) != ST_OK) {
+	if (JTAG_shift(handler, &scan_xfer, JTAG_SIR_XFER) != ST_OK) {
 		DBG_log(LEV_ERROR, "ShftIR error");
 		return -1;
 	}
