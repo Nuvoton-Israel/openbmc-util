@@ -11,15 +11,37 @@ gidNumber: 1010
 dn: cn=web,ou=group,dc=ldap,dc=example,dc=com
 objectClass: posixGroup
 cn: web
-gidNumber: 1013
+gidNumber: 1000
 
 dn: cn=ipmi,ou=group,dc=ldap,dc=example,dc=com
 objectClass: posixGroup
 cn: ipmi
-gidNumber: 1011
+gidNumber: 1006
 
 dn: cn=redfish,ou=group,dc=ldap,dc=example,dc=com
 objectClass: posixGroup
 cn: redfish
-gidNumber: 1012
+gidNumber: 1001
+
+dn: cn=priv-user,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: priv-user
+gidNumber: 1003
+
+dn: cn=priv-admin,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: priv-admin
+gidNumber: 1002
+memberUid: user1
+memberUid: user2
+
+dn: cn=priv-callback,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: priv-callback
+gidNumber: 1005
+
+dn: cn=priv-operator,ou=group,dc=ldap,dc=example,dc=com
+objectClass: posixGroup
+cn: priv-operator
+gidNumber: 1004
 

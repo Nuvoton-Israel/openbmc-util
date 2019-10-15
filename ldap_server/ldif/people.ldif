@@ -5,6 +5,7 @@ ou: people
 
 dn: uid=user1,ou=people,dc=ldap,dc=example,dc=com
 objectClass: user-account-info-obj
+objectClass: user-priv-ipmi-obj
 objectClass: posixAccount
 objectClass: shadowAccount
 cn: user1
@@ -12,14 +13,21 @@ gidNumber: 1010
 homeDirectory: /home/user1
 uid: user1
 uidNumber: 1001
-UserEnabled: 0
+UserEnabled: 1
 UserLockedForFailAttempt: 0
 UserPrivilege: priv-admin
 loginShell: /bin/sh
 userPassword: {SSHA}M32upRyL0qlcX9iEfnR9Zrt0Sgn2Ucp5
+user-passwd-ipmi: 123
+user-priv-ipmi-ch: priv-admin
+user-ipmi-en: 1
+user-link-auth-en: 1
+user-acc-callback: 0
+
 
 dn: uid=user2,ou=people,dc=ldap,dc=example,dc=com
 objectClass: user-account-info-obj
+objectClass: user-priv-ipmi-obj
 objectClass: posixAccount
 objectClass: shadowAccount
 cn: user2
@@ -27,14 +35,21 @@ gidNumber: 1010
 homeDirectory: /home/user2
 uid: user2
 uidNumber: 1002
-UserEnabled: 0
+UserEnabled: 1
 UserLockedForFailAttempt: 0
 UserPrivilege: priv-admin
 loginShell: /bin/sh
 userPassword: {SSHA}5AE3qOct8MlvuE5b5nhNrntU8K7g2+wG
+user-passwd-ipmi: 123
+user-priv-ipmi-ch: priv-admin
+user-ipmi-en: 1
+user-link-auth-en: 1
+user-acc-callback: 0
+
 
 dn: uid=user3,ou=people,dc=ldap,dc=example,dc=com
 objectClass: user-account-info-obj
+objectClass: user-priv-ipmi-obj
 objectClass: posixAccount
 objectClass: shadowAccount
 cn: user3
@@ -42,11 +57,16 @@ gidNumber: 1010
 homeDirectory: /home/user3
 uid: user3
 uidNumber: 1003
-UserEnabled: 0
+UserEnabled: 1
 UserLockedForFailAttempt: 0
 UserPrivilege: priv-admin
 loginShell: /bin/sh
 userPassword: {SSHA}dB2QIjAhUtyhyr/YzQIQjtDD3uBxtY1F
+user-passwd-ipmi: 123
+user-priv-ipmi-ch: priv-admin
+user-ipmi-en: 1
+user-link-auth-en: 1
+user-acc-callback: 0
 
 dn: uid=proxyuser,ou=people,dc=ldap,dc=example,dc=com
 objectClass: user-account-info-obj
@@ -57,11 +77,12 @@ gidNumber: 1010
 homeDirectory: ""
 uid: proxyuser
 uidNumber: 1000
-UserEnabled: 0
+UserEnabled: 1
 UserLockedForFailAttempt: 0
 UserPrivilege: priv-admin
 loginShell: /bin/sh
 userPassword: {SSHA}dz7LWFmEJFU41E3YeHgIoGXCE/yKbihn
+
 
 dn: ou=login_info,uid=user1,ou=people,dc=ldap,dc=example,dc=com
 objectClass: organizationalUnit
@@ -97,12 +118,6 @@ user-login-interface: ipmi
 user-login-interface: /dev/pts
 user-login-interface: /dev/tty
 
-dn: bmc-uid=bmc2,cn=webserver,ou=login_info,uid=user1,ou=people,dc=ldap,dc=e
- xample,dc=com
-objectClass: user-priv-ipmi-obj
-bmc-uid: bmc2
-cn: priNetwork
-user-priv-ipmi-ch: admin
 
 dn: ou=login_info,uid=user2,ou=people,dc=ldap,dc=example,dc=com
 objectClass: organizationalUnit
@@ -129,19 +144,6 @@ user-login-interface: /dev/pts
 user-login-interface: /dev/tty
 user-login-interface: web
 
-dn: bmc-uid=bmc1,cn=email,ou=login_info,uid=user2,ou=people,dc=ldap,dc=examp
- le,dc=com
-objectClass: user-priv-ipmi-obj
-bmc-uid: bmc1
-cn: priIPMB
-user-priv-ipmi-ch: operator
-
-dn: bmc-uid=bmc2,cn=webserver,ou=login_info,uid=user2,ou=people,dc=ldap,dc=e
- xample,dc=com
-objectClass: user-priv-ipmi-obj
-bmc-uid: bmc2
-cn: priNetwork
-user-priv-ipmi-ch: admin
 
 dn: ou=login_info,uid=user3,ou=people,dc=ldap,dc=example,dc=com
 objectClass: organizationalUnit
@@ -163,18 +165,4 @@ user-login-disabled: 0
 user-login-interface: ipmi
 user-login-interface: redfish
 user-login-interface: ssh
-
-dn: bmc-uid=bmc1,cn=email,ou=login_info,uid=user3,ou=people,dc=ldap,dc=examp
- le,dc=com
-objectClass: user-priv-ipmi-obj
-bmc-uid: bmc1
-cn: priIPMB
-user-priv-ipmi-ch: operator
-
-dn: bmc-uid=bmc1,cn=webserver,ou=login_info,uid=user3,ou=people,dc=ldap,dc=e
- xample,dc=com
-objectClass: user-priv-ipmi-obj
-bmc-uid: bmc1
-cn: priIPMB
-user-priv-ipmi-ch: admin
 

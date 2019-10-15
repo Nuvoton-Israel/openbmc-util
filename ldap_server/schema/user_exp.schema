@@ -30,6 +30,12 @@ objectIdentifier userEnabledOID         testAttr:13
 objectIdentifier userLFFAOID            testAttr:14
 objectIdentifier userPrilOID            testAttr:15
 
+objectIdentifier ipmiuserpasswdIPMIOID  testAttr:16
+objectIdentifier ipmichannelIPMIOID     testAttr:17
+objectIdentifier ipmiuserenableIPMIOID  testAttr:18
+objectIdentifier ipmiuserlinkauthenableIPMIOID  testAttr:19
+objectIdentifier ipmiuseraccesscallbackIPMIOID  testAttr:20
+
 
 objectIdentifier userPrivObjOID         testObject:1
 objectIdentifier userGroupObjOID        testObject:2
@@ -80,7 +86,15 @@ objectclass ( userGroupObjOID
 attributetype ( userpasswdIPMIOID
     NAME 'user-passwd-ch'
     DESC 'user password per ipmi channel'
-    SUP userPassword )
+    EQUALITY caseExactMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{20} )
+
+attributetype ( ipmiuserpasswdIPMIOID
+    NAME 'user-passwd-ipmi'
+    DESC 'user password for ipmi login'
+    EQUALITY caseExactMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{20} )
+
 
 attributetype ( userPrivIPMIOID
     NAME 'user-priv-ipmi-ch'
@@ -94,6 +108,31 @@ attributetype ( channelIDOID
     DESC 'channel ID'
     EQUALITY caseIgnoreMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ipmichannelIPMIOID
+    NAME 'ipmi-channel-name'
+    DESC 'string expression for the ipmi channel'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{40} )
+
+attributetype ( ipmiuserenableIPMIOID
+    NAME 'user-ipmi-en'
+    DESC 'user ipmi enable configuration'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+attributetype ( ipmiuserlinkauthenableIPMIOID
+    NAME 'user-link-auth-en'
+    DESC 'user ipmi link auth enable configuration'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+attributetype ( ipmiuseraccesscallbackIPMIOID
+    NAME 'user-acc-callback'
+    DESC 'user ipmi access callback configuration'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
 
 attributetype ( bmcIDOID
     NAME 'bmcID'
@@ -193,7 +232,7 @@ objectclass ( ipmiMappingInfoObjOID
     NAME 'ipmi-mapping-info-obj'
     DESC 'channel mapping in ipmi info object class'
     SUP top STRUCTURAL
-    MUST ( cn $ ipmi-ch-num )
+    MUST ( cn $ ipmi-ch-num $ chan-priv-lvl )
      )
 
 
@@ -222,6 +261,6 @@ objectclass ( userAccountInfObjOID
 objectclass ( userIPMIObjOID
     NAME 'user-priv-ipmi-obj'
     DESC 'user privilege per ipmi channel object class'
-    SUP top STRUCTURAL
-    MUST ( bmc-uid $ user-priv-ipmi-ch $ cn)
-    MAY (user-passwd-ch) )
+    SUP top AUXILIARY
+    MAY ( ipmi-channel-name $ bmc-uid $ user-passwd-ipmi $ user-priv-ipmi-ch $ user-ipmi-en $ user-link-auth-en $ user-acc-callback )
+     )

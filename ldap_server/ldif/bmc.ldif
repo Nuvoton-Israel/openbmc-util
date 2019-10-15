@@ -6,8 +6,8 @@ ou: bmc
 dn: bmc-uid=bmc1,ou=bmc,dc=ldap,dc=example,dc=com
 objectClass: bmc-info-obj
 bmc-uid: bmc1
-macAddress: 00:00:f7:a0:ff:fc
-macAddress: 00:00:f7:a0:ff:fd
+macAddress: 00:00:F7:A0:01:DC
+macAddress: 00:26:18:da:2c:94
 cn: bmc1
 
 dn: bmc-uid=bmc2,ou=bmc,dc=ldap,dc=example,dc=com
@@ -24,13 +24,15 @@ ou: ipmi-mapping
 dn: cn=priIPMB,ou=ipmi-mapping,bmc-uid=bmc1,ou=bmc,dc=ldap,dc=example,dc=com
 objectClass: ipmi-mapping-info-obj
 cn: priIPMB
-ipmi-ch-num: 0
+ipmi-ch-num: 2
+chan-priv-lvl: priv-admin
 
 dn: cn=priNetwork,ou=ipmi-mapping,bmc-uid=bmc1,ou=bmc,dc=ldap,dc=example,dc=
  com
 objectClass: ipmi-mapping-info-obj
 cn: priNetwork
-ipmi-ch-num: 2
+ipmi-ch-num: 1
+chan-priv-lvl: priv-admin
 
 dn: ou=ipmi-mapping,bmc-uid=bmc2,ou=bmc,dc=ldap,dc=example,dc=com
 objectClass: organizationalUnit
@@ -40,5 +42,5 @@ dn: cn=priNetwork,ou=ipmi-mapping,bmc-uid=bmc2,ou=bmc,dc=ldap,dc=example,dc=
  com
 objectClass: ipmi-mapping-info-obj
 cn: priNetwork
-ipmi-ch-num: 2
-
+ipmi-ch-num: 1
+chan-priv-lvl: priv-admin
