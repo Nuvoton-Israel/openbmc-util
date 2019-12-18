@@ -1,0 +1,81 @@
+======================
+Build Instructions:
+======================
+Requirements:
+1. Now using QT 5.7/MinGW 5.3.
+
+Short Version:
+1. Install the Qt Full SDK and use QT Creator to build.
+
+======================
+Getting Qt:
+======================
+http://www.qt.io/download-open-source/
+http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe
+welcome-> next
+qt account -> leave all empty, next
+setup -> next
+installation folder: c:\qt -> next
+select components: qt 5.7, deselect all, select minGW 5.3.0 -> next
+***and tools-mingw5.3.0
+license Agreement: agree -> next
+start menu shortcuts -> next
+install
+installation finished -> next -> launch
+
+======================
+Add a new translation:
+======================
+Adding a new translation:
+First, install QT as described above.
+Next, run QT Linguist from the Windows Start Menu->QT folder.
+File -> Open diskimager_en.ts
+edit-> translation file settings, set target language and country/region.
+file-> save as Open diskimager_??.ts
+translate all the strings into the new language, save the file
+edit RemoteMediaCilet.pro to include the new language: 
+TRANSLATIONS  = 
+
+============================
+Generate cert & private key:
+============================
+Using openssl generate private key, the instructions as below:
+$ openssl genrsa -aes256 -out private.key 2048
+
+Create Certificate Signing Requests (CSR)
+$ openssl req -new -key private.key -out CSR.csr
+
+Check CSR：
+openssl req -text -in CSR.csr -noout
+
+Generate Self-signed certificate from CSR:
+openssl x509 -req -days 365 -in CSR.csr -signkey private.key -out self-signed.crt
+
+Generate self-signed cerificate from private key:
+openssl req -new -x509 -days 365 -key private.key -out self-signed-2.crt
+
+
+======================
+WIN OPENSSL Lib:
+======================
+http://slproweb.com/products/Win32OpenSSL.html
+Please install Win32OpenSSL-1_0_2L.exe under C:/OpenSSL-Win32
+Remember to modify applink.c under C:\OpenSSL-Win32\include\openssl\
+
+Add (void *) in front of app_stdin,app_stdout,app_stderr until _close
+Example:
+	OPENSSL_ApplinkTable[APPLINK_STDIN] = (void *)app_stdin;
+	OPENSSL_ApplinkTable[APPLINK_STDOUT] = (void *)app_stdout;
+	OPENSSL_ApplinkTable[APPLINK_STDERR] = (void *)app_stderr;
+	OPENSSL_ApplinkTable[APPLINK_FPRINTF] = (void *)fprintf;
+	~~~~~
+	OPENSSL_ApplinkTable[APPLINK_CLOSE] = (void *)_close;
+
+============================
+Extra:
+============================
+This project uses and includes binaries of the Qt library, licensed under the 
+"Library General Public License" and is available at 
+http://www.qt-project.org/.
+
+The license text is available in LGPL-2.1
