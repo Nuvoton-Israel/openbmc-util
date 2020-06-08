@@ -51,6 +51,15 @@ void updaterMain(UpdateHandlerInterface* updater, const std::string& imagePath,
         std::fprintf(stderr, "Sending over the firmware image.\n");
         updater->sendFile(imagePath);
 
+        try
+        {
+            std::fprintf(stderr, "sendPacket: send ipmi oem cmd (0x3e)\n");
+            reply = ipmi->sendPacket(ipmiOEMNetFn, ipmiOEMCmd, request);
+        }
+        catch (const IpmiException& e)
+        {
+            std::fprintf(stderr, "sendPacket: send ipmi oem cmd error\n");
+        }
     }
     catch (...)
     {
