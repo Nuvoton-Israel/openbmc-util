@@ -23,5 +23,6 @@ sudo ./setpci -d 1050:0750 04.B=02
 
 xfer_mbox_mem command usage:
 ```
+sudo cp /sys/firmware/dmi/tables/DMI ./
 sudo ./xfer_mbox_mem --command update --interface ipmipci --image DMI --sig xfer_mbox_mem
 ```
