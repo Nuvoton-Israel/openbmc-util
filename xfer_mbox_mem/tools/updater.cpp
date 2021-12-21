@@ -28,6 +28,8 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+#include <fstream>
+#include <exception>
 
 #include "ipmi_errors.hpp"
 #include "ipmi_interface.hpp"
@@ -39,26 +41,61 @@ constexpr int ipmiOEMCmd = 62;
 namespace host_tool
 {
 
+// we will not handler extra large file error, and
+// we do only support sending < 16K file via mailbox
+unsigned int getFileSize(
+        const std::string& imagePath, std::vector<std::uint8_t> &request)
+{
+    unsigned int image_size = 0;
+    constexpr unsigned int maxImageSize = 0x4000;
+    try
+    {
+        std::ifstream in(imagePath, std::ifstream::ate | std::ifstream::binary);
+        image_size = in.tellg();
+        if (image_size > maxImageSize || image_size == 0)
+        {
+            std::fprintf(stderr, "File size is too large!, %u\n", image_size);
+            return 0;
+        }
+        std::fprintf(stdout, "image size: %u\n", image_size);
+        // put the image size as byte array
+        request.push_back(image_size & 0xFF);
+        request.push_back(image_size >> 8 & 0xFF);
+        request.push_back(image_size >> 16 & 0xFF);
+        request.push_back(image_size >> 24 & 0xFF);
+    }
+    catch (const std::exception& e)
+    {
+         std::fprintf(stderr, "Get file size error, %s\n", e.what());
+    }
+    return image_size;
+}
+
 void updaterMain(UpdateHandlerInterface* updater, const std::string& imagePath,
                  const std::string& signaturePath)
 {
     auto ipmi = host_tool::IpmiHandler::CreateIpmiHandler();
-    std::vector<std::uint8_t> request, reply;
+    std::vector<std::uint8_t> request={}, reply;
 
     try
     {
         /* Send over the firmware image. */
         std::fprintf(stderr, "Sending over the firmware image.\n");
         updater->sendFile(imagePath);
-
         try
         {
+            // get image size first
+            if (getFileSize(imagePath, request) == 0)
+            {
+                return;
+            }
             std::fprintf(stderr, "sendPacket: send ipmi oem cmd (0x3e)\n");
             reply = ipmi->sendPacket(ipmiOEMNetFn, ipmiOEMCmd, request);
         }
         catch (const IpmiException& e)
         {
             std::fprintf(stderr, "sendPacket: send ipmi oem cmd error\n");
+	    std::fprintf(stderr, "%s\n", e.what());
         }
     }
     catch (...)
